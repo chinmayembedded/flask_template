@@ -6,7 +6,11 @@ from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
 import torch
 from validate_email import validate_email
 REQUEST_API = Blueprint('request_api', __name__)
-
+    
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
+tokenizer = M2M100Tokenizer.from_pretrained("facebook/m2m100_1.2B")
+model = M2M100ForConditionalGeneration.from_pretrained("facebook/m2m100_1.2B").to(device)
+ 
 
 def get_blueprint():
     """Return the blueprint for the main app module"""
@@ -54,11 +58,8 @@ def translate():
     data = request.get_json(force=True)
     source_l = "en"
     target_l = "de"
-    device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    tokenizer = M2M100Tokenizer.from_pretrained("facebook/m2m100_1.2B")
-    model = M2M100ForConditionalGeneration.from_pretrained("facebook/m2m100_1.2B").to(device)
-    
-    if not data.get['rawtext']:
+   
+    if not data['rawtext']:
         abort(400)
     
     source_text = data['rawtext']
@@ -76,9 +77,11 @@ def translate():
     encoded_hi = tokenizer([source_text], return_tensors="pt", padding=True).to(device)
     generated_tokens = model.generate(**encoded_hi, forced_bos_token_id=tokenizer.get_lang_id(target_l))
     translation = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
+    print(translation)
     result = {
-        'translated_text':translation[0]
+        "translated_text": translation[0]
     }
+    return jsonify(result), 200
     
     '''
     if not request.get_json():
