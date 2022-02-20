@@ -2,7 +2,8 @@
 import uuid
 from datetime import datetime, timedelta
 from flask import jsonify, abort, request, Blueprint
-
+from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
+import torch
 from validate_email import validate_email
 REQUEST_API = Blueprint('request_api', __name__)
 
@@ -25,7 +26,7 @@ BOOK_REQUESTS = {
     }
 }
 
-
+'''
 @REQUEST_API.route('/request', methods=['GET'])
 def get_records():
     """Return all book requests
@@ -46,17 +47,40 @@ def get_record_by_id(_id):
     if _id not in BOOK_REQUESTS:
         abort(404)
     return jsonify(BOOK_REQUESTS[_id])
+'''
 
+@REQUEST_API.route('/translate', methods=['POST'])
+def translate():
+    data = request.get_json(force=True)
+    source_l = "en"
+    target_l = "de"
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    tokenizer = M2M100Tokenizer.from_pretrained("facebook/m2m100_1.2B")
+    model = M2M100ForConditionalGeneration.from_pretrained("facebook/m2m100_1.2B").to(device)
+    
+    if not data.get['rawtext']:
+        abort(400)
+    
+    source_text = data['rawtext']
 
-@REQUEST_API.route('/request', methods=['POST'])
-def create_record():
-    """Create a book request record
-    @param email: post : the requesters email address
-    @param title: post : the title of the book requested
-    @return: 201: a new_uuid as a flask/response object \
-    with application/json mimetype.
-    @raise 400: misunderstood request
-    """
+    source_l = data['sourcelang'].lower()
+    if(source_l == ''):
+        tokenizer.src_lang = "en"
+    else:
+        tokenizer.src_lang = source_l
+    
+    target_l = data['targetlang'].lower()
+    if(target_l == ''):
+        target_l = "de"
+    
+    encoded_hi = tokenizer([source_text], return_tensors="pt", padding=True).to(device)
+    generated_tokens = model.generate(**encoded_hi, forced_bos_token_id=tokenizer.get_lang_id(target_l))
+    translation = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
+    result = {
+        'translated_text':translation[0]
+    }
+    
+    '''
     if not request.get_json():
         abort(400)
     data = request.get_json(force=True)
@@ -77,6 +101,6 @@ def create_record():
     BOOK_REQUESTS[new_uuid] = book_request
     # HTTP 201 Created
     return jsonify({"id": new_uuid}), 201
-
+    '''
 
 

@@ -67,6 +67,39 @@
           }
         }
       }
+    },
+    "/translate":{
+      "post": {
+        "tags": [
+          "Translate text"
+        ],
+        "summary": "Translate text from source to target",
+        "requestBody": {
+          "description": "Machine translation",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/translateRequest"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      }
     }
   },
   "components": {
@@ -91,31 +124,20 @@
           }
         }
       },
-      "bookRequest": {
+      "translateRequest": {
         "type": "object",
         "properties": {
-          "title": {
+          "rawtext": {
             "type": "string",
             "format": "string"
           },
-          "email": {
+          "sourcelang": {
             "type": "string",
-            "format": "email"
+            "format": "string"
           },
-          "timestamp": {
+          "targetlang": {
             "type": "string",
-            "format": "number"
-          }
-        }
-      },
-      "bookRequests": {
-        "type": "object",
-        "properties": {
-          "bookRequest": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/bookRequest"
-            }
+            "format": "string"
           }
         }
       }
