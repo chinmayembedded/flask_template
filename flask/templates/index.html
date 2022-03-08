@@ -37,7 +37,18 @@
             
             $(function(){
 				$("#translate").click(function(){
-                   
+                    if($('input[class=sourcelang]').val() == ""){
+                       alert("Please select source language");
+                        return false;
+                    }
+                    if($('input[class=targetlang]').val() == ""){
+                        alert("Please select target language");
+                        return false;
+                    }
+                    if($("#textareasource").val() == ""){
+                        alert("Please enter text to translate");
+                        return false;
+                    }
                     var requestData = {
                         "sourcelang": $('input[class=sourcelang]').val(),
                         "targetlang": $('input[class=targetlang]').val(),
@@ -76,7 +87,7 @@
                     <div class="container ui stackable equal width grid">
                         <div class="ui fluid search dropdown button column">
                             <i class="cloud icon"></i>
-                            <span class="text">Model</span>
+                            <span class="text">Model / Domain</span>
                             <div class="menu">
                                 <div class="item disabled">Facebook M2M</div>
                             </div>
