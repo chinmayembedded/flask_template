@@ -3,11 +3,11 @@
     <head>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>CTS NMT Systems</title>
+        <title>YANMTT NMT</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous" />
-        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <!-- <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"> -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
         <link rel="canonical" href="https://getbootstrap.com/docs/4.1/examples/sticky-footer/" />
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='semantic.css') }}" />
@@ -61,7 +61,7 @@
     </head>
     <body>
         <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-            <a class="navbar-brand" href="/"><font size="+1"><img src="{{ url_for('static', filename='favicon.png') }}" height="40px"/>&nbsp;&nbsp;&nbsp;&nbsp;Centre for Translation Studies :: Neural Machine Translation Web Application</a>
+            <a class="navbar-brand" href="/"><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;Yet Another Neural Machine Translation Toolkit (YANMTT) :: Neural Machine Translation Web Application</a>
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -70,9 +70,6 @@
         <br /><br /><br /><br />
         <div class="container">
             <form method="POST" action="">
-				<!--input type="hidden" id="sourcelang" name="sourcelang" class="sourcelang" ></input-->
-				<!--input type="hidden" id="targetlang" name="targetlang" class="targetlang" ></input-->
-                <!--input type="hidden" id="domainval" name="domainval"></input>-->
 				A sample sentence: The digital age, also referred to as the information society, is characterized by ever growing volumes of information.<br /><br/>
                 <br /><br />
                 <div class="form-group">
@@ -326,7 +323,7 @@
         <footer class="footer">
           <div class="container">
             <span class="text-muted">
-                V. 0.2 - Being developed by <a href='https://dipteshkanojia.github.io'>Diptesh</a>; Original template credits to <a href="https://github.com/fantinuoli/Local-NMT">Claudio Fantinuoli</a>; Translation model at <a href="https://huggingface.co/docs/transformers/model_doc/m2m_100">HuggingFace FB-M2M Model</a>.
+                V. 0.2 - Being developed by Raj Dabre, Chinmay Sawant, and Diptesh Kanojia</a>; Translation model at <a href="https://huggingface.co/docs/transformers/model_doc/m2m_100">HuggingFace FB-M2M Model</a>.
             </span>
           </div>
         </footer>
