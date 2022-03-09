@@ -34,13 +34,24 @@
                     $("#textareasource").val('');
                 });
             });
+            function copy(selector){
+                var $temp = $("<div>");
+                $("body").append($temp);
+                $temp.attr("contenteditable", true)
+                    .html($(selector).html()).select()
+                    .on("focus", function() { document.execCommand('selectAll',false,null); })
+                    .focus();
+                document.execCommand("copy");
+                $temp.remove();
+            }
             $(function(){
 				$("#translate").click(function(){
 
                     $("#sourceAlert").hide()
                     $("#targetAlert").hide()
                     $("#rawTextAlert").hide()
-                    
+                    $("#copyTransButton").hide()
+                    $("#backTranslate").hide()
                     if($('input[class=sourcelang]').val() == ""){
                         $("#sourceAlert").show()
                         return false;
@@ -67,6 +78,45 @@
                         data: requestData,
                         success: function(data){
                             $("#translatedText").html(data.translated_text);
+                            $("#copyTransButton").show()
+                            $("#backTranslate").show()
+                        }
+                    });
+				});
+			});
+            $(function(){
+				$("#backTranslate").click(function(){
+                    // alert($("#translatedText").html());
+                    $("#sourceAlert").hide()
+                    $("#targetAlert").hide()
+                    $("#rawTextAlert").hide()
+                    $("#copyTransButton").hide()
+                    $("#backTranslate").hide()
+                    var textContent = $("#translatedText").html();
+                    $("#textareasource").val(textContent);
+                    var sourceLangNew = $('input[class=targetlang]').val();
+                    var targetLangNew = $('input[class=sourcelang]').val();
+                    // alert(sourceLangNew);
+                    // alert(targetLangNew);
+                    $("#sourcelang").val(sourceLangNew).change();
+                    $("#targetlang").val(targetLangNew).change();
+                    
+                    var requestData = {
+                        "sourcelang": $('input[class=sourcelang]').val(),
+                        "targetlang": $('input[class=targetlang]').val(),
+                        "rawtext": $("#textareasource").val()
+                    }
+                    // console.log(requestData);
+                    $("#originalText").html(requestData['rawtext']);
+                    $("#translatedText").html("Translating...");
+                    $.ajax({
+                        url: "{{ url_for('request_api.translate') }}",
+                        type: "POST",
+                        data: requestData,
+                        success: function(data){
+                            $("#translatedText").html(data.translated_text);
+                            $("#copyTransButton").show()
+                            $("#backTranslate").show()
                         }
                     });
 				});
@@ -342,8 +392,9 @@
             <div class="column">
                 <p>Translation</p>
                 <div id="translatedText" class="alert alert-success" role="alert">
-                    
                 </div>
+                <button class="btn btn-sm btn-info" id="copyTransButton" style="display: none" onclick="copy('#translatedText')">Copy Translation</button> 
+                <button class="btn btn-sm btn-info" id="backTranslate" style="display: none" >Back-translate</button> 
             </div>
           </div>
         </div>
