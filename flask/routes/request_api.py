@@ -2,6 +2,7 @@
 import uuid
 from datetime import datetime, timedelta
 from flask import jsonify, abort, request, Blueprint, render_template
+from bertviz.bertviz import model_view
 #from flask import Flask, flash, Response, redirect, url_for, request, session, abort, render_template, make_response, jsonify
 
 from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
@@ -51,13 +52,68 @@ def translate():
     else:
         tokenizer.tgt_lang = target_l
     
+    # encoded_hi = tokenizer([source_text], return_tensors="pt", padding=True).to(device)
+    # generated_tokens = model.generate(**encoded_hi, forced_bos_token_id=tokenizer.get_lang_id(target_l))
+    # translation = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
+    # print(translation)
     encoded_hi = tokenizer([source_text], return_tensors="pt", padding=True).to(device)
     generated_tokens = model.generate(**encoded_hi, forced_bos_token_id=tokenizer.get_lang_id(target_l))
     translation = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
-    # print(translation)
+    # outputs = model(input_ids=encoded_hi.input_ids, decoder_input_ids=generated_tokens, output_attentions=True)
+    # pyparams, vishtml=model_view(
+    #     encoder_attention=outputs.encoder_attentions,
+    #     decoder_attention=outputs.decoder_attentions,
+    #     cross_attention=outputs.cross_attentions,
+    #     encoder_tokens= tokenizer.convert_ids_to_tokens(encoded_hi.input_ids[0]),
+    #     decoder_tokens= tokenizer.convert_ids_to_tokens(generated_tokens[0]),
+    # )
+    # result = {
+    #     "translated_text": translation[0],
+    #     "pyparams": pyparams,
+    #     "vishtml": vishtml.data
+    # }
     result = {
         "translated_text": translation[0]
     }
     return jsonify(result), 200
 
+@REQUEST_API.route('/visualize', methods=['POST'])
+def visualize():
+
+    if not request.form:
+        abort(400)
+    
+    source_text = request.form['rawtext']
+    # print(langDict)
+    source_l = langDict[request.form['sourcelang'].lower()]
+    if(source_l == ''):
+        tokenizer.src_lang = "en"
+    else:
+        tokenizer.src_lang = source_l
+    
+    target_l = langDict[request.form['targetlang'].lower()]
+    # print(target_l)
+    if(target_l == ''):
+        target_l = "de"
+    else:
+        tokenizer.tgt_lang = target_l
+    
+    encoded_hi = tokenizer([source_text], return_tensors="pt", padding=True).to(device)
+    generated_tokens = model.generate(**encoded_hi, forced_bos_token_id=tokenizer.get_lang_id(target_l))
+    translation = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
+    outputs = model(input_ids=encoded_hi.input_ids, decoder_input_ids=generated_tokens, output_attentions=True)
+    pyparams, vishtml=model_view(
+        encoder_attention=outputs.encoder_attentions,
+        decoder_attention=outputs.decoder_attentions,
+        cross_attention=outputs.cross_attentions,
+        encoder_tokens= tokenizer.convert_ids_to_tokens(encoded_hi.input_ids[0]),
+        decoder_tokens= tokenizer.convert_ids_to_tokens(generated_tokens[0]),
+    )
+    result = {
+        "translated_text": translation[0],
+        "pyparams": pyparams,
+        "vishtml": vishtml.data
+    }
+
+    return jsonify(result), 200
  
