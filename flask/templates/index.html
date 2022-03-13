@@ -18,10 +18,6 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
         <script src="{{ url_for('static', filename='semantic.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
-        <!-- <script src="{{ url_for('static', filename='visualize.js') }}"></script> -->
-        
-        
-
         <script>
             $(document).ready(function(){
                 $('.ui.dropdown')
@@ -40,7 +36,7 @@
             });
             function copy(selector){
                 var $temp = $("<div>");
-                $("body").append($temp);
+                $("#textsample").append($temp);
                 $temp.attr("contenteditable", true)
                     .html($(selector).html()).select()
                     .on("focus", function() { document.execCommand('selectAll',false,null); })

@@ -7,25 +7,16 @@ from bertviz.bertviz import model_view
 from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
 import torch
 from validate_email import validate_email
-from transformers import MBartForConditionalGeneration, AutoModelForSeq2SeqLM
-from transformers import AlbertTokenizer, AutoTokenizer
-
 REQUEST_API = Blueprint('request_api', __name__)
     
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
-# tokenizer = M2M100Tokenizer.from_pretrained("facebook/m2m100_418M")
-tokenizer = AutoTokenizer.from_pretrained("ai4bharat/IndicBART", do_lower_case=False, use_fast=False, keep_accents=True)
-# model = M2M100ForConditionalGeneration.from_pretrained("facebook/m2m100_418M").to(device)
-model = AutoModelForSeq2SeqLM.from_pretrained("ai4bharat/IndicBART").to(device)
+tokenizer = M2M100Tokenizer.from_pretrained("facebook/m2m100_418M")
+model = M2M100ForConditionalGeneration.from_pretrained("facebook/m2m100_418M").to(device)
 
 languages = ["Afrikaans", "Amharic", "Arabic", "Asturian", "Azerbaijani", "Bashkir", "Belarusian", "Bulgarian", "Bengali", "Breton", "Bosnian", "Valencian", "Cebuano", "Czech", "Welsh", "Danish", "German", "Greeek", "English", "Spanish", "Estonian", "Persian", "Fulah", "Finnish", "French", "Irish", "Scottish Gaelic", "Galician", "Gujarati", "Hausa", "Hebrew", "Hindi", "Croatian", "Haitian Creole", "Hungarian", "Armenian", "Indonesian", "Igbo", "Iloko", "Icelandic", "Italian", "Japanese", "Javanese", "Georgian", "Kazakh", "Central Khmer", "Kannada", "Korean", "Letzeburgesch", "Ganda", "Lingala", "Lao", "Lithuanian", "Latvian", "Malagasy", "Macedonian", "Malayalam", "Mongolian", "Marathi", "Malay", "Burmese", "Nepali", "Flemish", "Norwegian", "Northern Sotho", "Occitan", "Oriya", "Punjabi", "Polish", "Pashto", "Portuguese", "Moldovan", "Russian", "Sindhi", "Sinhalese", "Slovak", "Slovenian", "Somali", "Albanian", "Serbian", "Swati", "Sundanese", "Swedish", "Swahili", "Tamil", "Thai", "Tagalog", "Tswana", "Turkish", "Ukrainian", "Urdu", "Uzbek", "Vietnamese", "Wolof", "Xhosa", "Yiddish", "Yoruba", "Chinese", "Zulu"]
 langslow = (map(lambda x: x.lower(), languages))
 langCodes = ["af", "am", "ar", "ast", "az", "ba", "be", "bg", "bn", "br", "bs", "ca", "ceb", "cs", "cy", "da", "de", "el", "en", "es", "et", "fa", "ff", "fi", "fr", "ga", "gd", "gl", "gu", "ha", "he", "hi", "hr", "ht", "hu", "hy", "id", "ig", "ilo", "is", "it", "ja", "jv", "ka", "kk", "km", "kn", "ko", "lb", "lg", "ln", "lo", "lt", "lv", "mg", "mk", "ml", "mn", "mr", "ms", "my", "ne", "nl", "no", "ns", "oc", "or", "pa", "pl", "ps", "pt", "ro", "ru", "sd", "si", "sk", "sl", "so", "sq", "sr", "ss", "su", "sv", "sw", "ta", "th", "tl", "tn", "tr", "uk", "ur", "uz", "vi", "wo", "xh", "yi", "yo", "zh", "zu"]
 langDict = dict(zip(langslow,langCodes))
-
-bos_id = tokenizer._convert_token_to_id_with_added_voc("<s>")
-eos_id = tokenizer._convert_token_to_id_with_added_voc("</s>")
-pad_id = tokenizer._convert_token_to_id_with_added_voc("<pad>")
 
 def get_blueprint():
     """Return the blueprint for the main app module"""
