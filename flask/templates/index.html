@@ -23,12 +23,33 @@
                 $('.ui.dropdown')
                 .dropdown();
             });
+
+            $(document).ready(function(){
+                var hf_models = ['facebook/m2m100_418M', 'facebook/m2m100_1.2B']
+                $.ajax({
+                    url: "{{ url_for('request_api.models') }}",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data){
+                        var models = data['models'];
+                        models = models.concat(hf_models);
+                        for( var i = 0; i< models.length; i++){
+                                $('#models').append("<div class='item'>"+ models[i] + "</div>");
+                        }
+                    },
+                    error:function(){
+                        console.log('error');
+                    }
+                });
+            });
+
             $(document).ready(function(){
                 var textContent = "The digital age, also referred to as the information society, is characterized by ever-growing volumes of information.";
                 $("#copybutton").click(function(){
                     $("#textareasource").val(textContent);
                 });
             });
+
             $(document).ready(function(){
                 $("#clearbutton").click(function(){
                     $("#textareasource").val('');
@@ -44,6 +65,50 @@
                 document.execCommand("copy");
                 $temp.remove();
             }
+
+            $(document).on('change','#modeldomain',function(){
+                var model = $('input[class=modeldomain]').val();
+                $("#modelLoadAlert").show();
+                $.ajax({
+                        url: "{{ url_for('request_api.load_model') }}",
+                        type: "POST",
+                        data: {
+                            "model_name": model
+                        },
+                        success: function(data){
+                            if (data["message"] == "success"){
+                                console.log(data);
+
+                                if("source_lang" in data && "target_lang" in data){
+                                    var lang = data['source_lang'];
+                                    var divs = '';
+                                    for( var i = 0; i< lang.length; i++){
+                                        divs = divs + "<div class='item' data-id=" + lang[i]["id"] +">"+ lang[i]["name"] + "</div>"
+                                    }
+                                    $('#sourcel').html(divs);
+                                    var lang = data['target_lang'];
+                                    var divs = '';
+                                    for( var i = 0; i< lang.length; i++){
+                                        divs = divs + "<div class='item' data-id=" + lang[i]["id"] +">"+ lang[i]["name"] + "</div>"
+                                    }
+                                    $('#targetl').html(divs);
+                                }
+                                else{
+                                    var divs = '<div class="item" data-id="af">Afrikaans</div><div class="item" data-id="sq">Albanian</div><div class="item" data-id="am">Amharic</div><div class="item" data-id="ar">Arabic</div><div class="item" data-id="hy">Armenian</div><div class="item" data-id="ast">Asturian</div><div class="item" data-id="az">Azerbaijani</div><div class="item" data-id="ba">Bashkir</div><div class="item" data-id="be">Belarusian</div><div class="item" data-id="bg">Bulgarian</div><div class="item" data-id="bn">Bengali</div><div class="item" data-id="br">Breton</div><div class="item" data-id="bs">Bosnian</div><div class="item" data-id="ceb">Cebuano</div><div class="item" data-id="zh">Chinese</div><div class="item" data-id="cs">Czech</div><div class="item" data-id="da">Danish</div><div class="item" data-id="en">English</div><div class="item" data-id="et">Estonian</div><div class="item" data-id="fi">Finnish</div><div class="item" data-id="nl">Flemish</div><div class="item" data-id="fr">French</div><div class="item" data-id="ff">Fulah</div><div class="item" data-id="de">German</div><div class="item" data-id="el">Greeek</div><div class="item" data-id="fa">Persian</div><div class="item" data-id="ga">Irish</div><div class="item" data-id="gd">Scottish Gaelic</div><div class="item" data-id="gl">Galician</div><div class="item" data-id="lg">Ganda</div><div class="item" data-id="gu">Gujarati</div><div class="item" data-id="ha">Hausa</div><div class="item" data-id="he">Hebrew</div><div class="item" data-id="hi">Hindi</div><div class="item" data-id="hr">Croatian</div><div class="item" data-id="ht">Haitian Creole</div><div class="item" data-id="hu">Hungarian</div><div class="item" data-id="id">Indonesian</div><div class="item" data-id="ig">Igbo</div><div class="item" data-id="ilo">Iloko</div><div class="item" data-id="is">Icelandic</div><div class="item" data-id="it">Italian</div><div class="item" data-id="ja">Japanese</div><div class="item" data-id="jv">Javanese</div><div class="item" data-id="ka">Georgian</div><div class="item" data-id="kk">Kazakh</div><div class="item" data-id="km">Central Khmer</div><div class="item" data-id="kn">Kannada</div><div class="item" data-id="ko">Korean</div><div class="item" data-id="lb">Letzeburgesch</div><div class="item" data-id="ln">Lingala</div><div class="item" data-id="lo">Lao</div><div class="item" data-id="lt">Lithuanian</div><div class="item" data-id="lv">Latvian</div><div class="item" data-id="mk">Macedonian</div><div class="item" data-id="mg">Malagasy</div><div class="item" data-id="ml">Malayalam</div><div class="item" data-id="mr">Marathi</div><div class="item" data-id="mn">Mongolian</div><div class="item" data-id="ro">Moldovan</div><div class="item" data-id="ms">Malay</div><div class="item" data-id="my">Burmese</div><div class="item" data-id="ne">Nepali</div><div class="item" data-id="no">Norwegian</div><div class="item" data-id="ns">Northern Sotho</div><div class="item" data-id="oc">Occitan</div><div class="item" data-id="or">Oriya</div><div class="item" data-id="pa">Punjabi</div><div class="item" data-id="pl">Polish</div><div class="item" data-id="ps">Pashto</div><div class="item" data-id="pt">Portuguese</div><div class="item" data-id="ru">Russian</div><div class="item" data-id="sr">Serbian</div><div class="item" data-id="sd">Sindhi</div><div class="item" data-id="si">Sinhalese</div><div class="item" data-id="sk">Slovak</div><div class="item" data-id="sl">Slovenian</div><div class="item" data-id="so">Somali</div><div class="item" data-id="es">Spanish</div><div class="item" data-id="ss">Swati</div><div class="item" data-id="su">Sundanese</div><div class="item" data-id="sv">Swedish</div><div class="item" data-id="sw">Swahili</div><div class="item" data-id="ta">Tamil</div><div class="item" data-id="th">Thai</div><div class="item" data-id="tl">Tagalog</div><div class="item" data-id="tn">Tswana</div><div class="item" data-id="tr">Turkish</div><div class="item" data-id="uk">Ukrainian</div><div class="item" data-id="ur">Urdu</div><div class="item" data-id="uz">Uzbek</div><div class="item" data-id="ca">Valencian</div><div class="item" data-id="vi">Vietnamese</div><div class="item" data-id="cy">Welsh</div><div class="item" data-id="wo">Wolof</div><div class="item" data-id="xh">Xhosa</div><div class="item" data-id="yi">Yiddish</div><div class="item" data-id="yo">Yoruba</div><div class="item" data-id="zu">Zulu</div>';
+                                    $('#sourcel').html(divs);
+                                    $('#targetl').html(divs);
+                                }
+                                $("#modelLoadAlert").hide();
+                                $("#modelLoadSuccess").show();
+                            } 
+                            else{
+                                $("#modelLoadAlert").hide();
+                                $("#modelLoadFailed").show();
+                            }
+                        }
+                });
+            });
+
             $(function(){
 				$("#translate").click(function(){
 
@@ -69,9 +134,9 @@
                     var requestData = {
                         "sourcelang": $('input[class=sourcelang]').val(),
                         "targetlang": $('input[class=targetlang]').val(),
-                        "rawtext": $("#textareasource").val()
+                        "rawtext": $("#textareasource").val(),
+                        "model": $('input[class=modeldomain]').val()
                     }
-                    // console.log(requestData);
                     $("#originalText").html(requestData['rawtext']);
                     $("#translatedText").html("Translating...");
                     $.ajax({
@@ -94,7 +159,8 @@
                     var requestData = {
                         "sourcelang": $('input[class=sourcelang]').val(),
                         "targetlang": $('input[class=targetlang]').val(),
-                        "rawtext": $("#originalText").html()
+                        "rawtext": $("#originalText").html(),
+                        "model": $('input[class=modeldomain]').val()
                     }
                     $("#attText").show();
                     $("#attinfo").show();
@@ -546,225 +612,42 @@
                         <a class="close" onclick="$('#rawTextAlert').hide()">×</a>  
                         Please enter <strong>the text</strong> to be translated.
                     </div>
+                    <div class="ui fluid alert alert-warning column" style="display: none" id="modelLoadAlert"> 
+                        <a class="close" onclick="$('#modelLoadAlert').hide()">×</a>  
+                        Model is loading. Please wait...  
+                    </div>
+                    <div class="ui fluid alert alert-success column" style="display: none" id="modelLoadSuccess"> 
+                        <a class="close" onclick="$('#modelLoadSuccess').hide()">×</a>  
+                        Model loaded successfully.
+                    </div>
+                    <div class="ui fluid alert alert-danger column" style="display: none" id="modelLoadFailed"> 
+                        <a class="close" onclick="$('#modelLoadFailed').hide()">×</a>  
+                        Model failed to load. 
+                    </div>
                 </div>
                 <hr><br/>
                 <div class="form-group">    
                     <div class="container ui stackable equal width grid">
                         <div class="ui fluid search dropdown button column">
+                            <input type="hidden" id="modeldomain" name="modeldomain" class="modeldomain">
                             <i class="cloud icon"></i>
                             <span class="text">Model / Domain</span>
-                            <div class="menu">
-                                <div class="item disabled">Facebook M2M</div>
+                            <div class="menu" id="models">
+                                <!-- <div class="item disabled">Facebook M2M</div> -->
                             </div>
                         </div>
                         <div class="ui fluid search dropdown button column">
                             <input type="hidden" id="sourcelang" name="sourcelang" class="sourcelang">
                             <span class="text"><i class="world icon"></i>Source Language</span>
                             <div class="menu" id="sourcel">
-                                <div class="item" data-id="af">Afrikaans</div>
-                                <div class="item" data-id="sq">Albanian</div>
-                                <div class="item" data-id="am">Amharic</div>
-                                <div class="item" data-id="ar">Arabic</div>
-                                <div class="item" data-id="hy">Armenian</div>
-                                <div class="item" data-id="ast">Asturian</div>
-                                <div class="item" data-id="az">Azerbaijani</div>
-                                <div class="item" data-id="ba">Bashkir</div>
-                                <div class="item" data-id="be">Belarusian</div>
-                                <div class="item" data-id="bg">Bulgarian</div>
-                                <div class="item" data-id="bn">Bengali</div>
-                                <div class="item" data-id="br">Breton</div>
-                                <div class="item" data-id="bs">Bosnian</div>
-                                <div class="item" data-id="ceb">Cebuano</div>
-                                <div class="item" data-id="zh">Chinese</div>
-                                <div class="item" data-id="cs">Czech</div>
-                                <div class="item" data-id="da">Danish</div>
-                                <div class="item" data-id="en">English</div>
-                                <div class="item" data-id="et">Estonian</div>
-                                <div class="item" data-id="fi">Finnish</div>
-                                <div class="item" data-id="nl">Flemish</div>
-                                <div class="item" data-id="fr">French</div>
-                                <div class="item" data-id="ff">Fulah</div>
-                                <div class="item" data-id="de">German</div>
-                                <div class="item" data-id="el">Greeek</div>
-                                <div class="item" data-id="fa">Persian</div>
-                                <div class="item" data-id="ga">Irish</div>
-                                <div class="item" data-id="gd">Scottish Gaelic</div>
-                                <div class="item" data-id="gl">Galician</div>
-                                <div class="item" data-id="lg">Ganda</div>
-                                <div class="item" data-id="gu">Gujarati</div>
-                                <div class="item" data-id="ha">Hausa</div>
-                                <div class="item" data-id="he">Hebrew</div>
-                                <div class="item" data-id="hi">Hindi</div>
-                                <div class="item" data-id="hr">Croatian</div>
-                                <div class="item" data-id="ht">Haitian Creole</div>
-                                <div class="item" data-id="hu">Hungarian</div>
-                                <div class="item" data-id="id">Indonesian</div>
-                                <div class="item" data-id="ig">Igbo</div>
-                                <div class="item" data-id="ilo">Iloko</div>
-                                <div class="item" data-id="is">Icelandic</div>
-                                <div class="item" data-id="it">Italian</div>
-                                <div class="item" data-id="ja">Japanese</div>
-                                <div class="item" data-id="jv">Javanese</div>
-                                <div class="item" data-id="ka">Georgian</div>
-                                <div class="item" data-id="kk">Kazakh</div>
-                                <div class="item" data-id="km">Central Khmer</div>
-                                <div class="item" data-id="kn">Kannada</div>
-                                <div class="item" data-id="ko">Korean</div>
-                                <div class="item" data-id="lb">Letzeburgesch</div>
-                                <div class="item" data-id="ln">Lingala</div>
-                                <div class="item" data-id="lo">Lao</div>
-                                <div class="item" data-id="lt">Lithuanian</div>
-                                <div class="item" data-id="lv">Latvian</div>
-                                <div class="item" data-id="mk">Macedonian</div>
-                                <div class="item" data-id="mg">Malagasy</div>
-                                <div class="item" data-id="ml">Malayalam</div>
-                                <div class="item" data-id="mr">Marathi</div>
-                                <div class="item" data-id="mn">Mongolian</div>
-                                <div class="item" data-id="ro">Moldovan</div>
-                                <div class="item" data-id="ms">Malay</div>
-                                <div class="item" data-id="my">Burmese</div>
-                                <div class="item" data-id="ne">Nepali</div>
-                                <div class="item" data-id="no">Norwegian</div>
-                                <div class="item" data-id="ns">Northern Sotho</div>
-                                <div class="item" data-id="oc">Occitan</div>
-                                <div class="item" data-id="or">Oriya</div>
-                                <div class="item" data-id="pa">Punjabi</div>
-                                <div class="item" data-id="pl">Polish</div>
-                                <div class="item" data-id="ps">Pashto</div>
-                                <div class="item" data-id="pt">Portuguese</div>
-                                <div class="item" data-id="ru">Russian</div>
-                                <div class="item" data-id="sr">Serbian</div>
-                                <div class="item" data-id="sd">Sindhi</div>
-                                <div class="item" data-id="si">Sinhalese</div>
-                                <div class="item" data-id="sk">Slovak</div>
-                                <div class="item" data-id="sl">Slovenian</div>
-                                <div class="item" data-id="so">Somali</div>
-                                <div class="item" data-id="es">Spanish</div>
-                                <div class="item" data-id="ss">Swati</div>
-                                <div class="item" data-id="su">Sundanese</div>
-                                <div class="item" data-id="sv">Swedish</div>
-                                <div class="item" data-id="sw">Swahili</div>
-                                <div class="item" data-id="ta">Tamil</div>
-                                <div class="item" data-id="th">Thai</div>
-                                <div class="item" data-id="tl">Tagalog</div>
-                                <div class="item" data-id="tn">Tswana</div>
-                                <div class="item" data-id="tr">Turkish</div>
-                                <div class="item" data-id="uk">Ukrainian</div>
-                                <div class="item" data-id="ur">Urdu</div>
-                                <div class="item" data-id="uz">Uzbek</div>
-                                <div class="item" data-id="ca">Valencian</div>
-                                <div class="item" data-id="vi">Vietnamese</div>
-                                <div class="item" data-id="cy">Welsh</div>
-                                <div class="item" data-id="wo">Wolof</div>
-                                <div class="item" data-id="xh">Xhosa</div>
-                                <div class="item" data-id="yi">Yiddish</div>
-                                <div class="item" data-id="yo">Yoruba</div>
-                                <div class="item" data-id="zu">Zulu</div>
+                                <div class="item" data-id="af">Afrikaans</div><div class="item" data-id="sq">Albanian</div><div class="item" data-id="am">Amharic</div><div class="item" data-id="ar">Arabic</div><div class="item" data-id="hy">Armenian</div><div class="item" data-id="ast">Asturian</div><div class="item" data-id="az">Azerbaijani</div><div class="item" data-id="ba">Bashkir</div><div class="item" data-id="be">Belarusian</div><div class="item" data-id="bg">Bulgarian</div><div class="item" data-id="bn">Bengali</div><div class="item" data-id="br">Breton</div><div class="item" data-id="bs">Bosnian</div><div class="item" data-id="ceb">Cebuano</div><div class="item" data-id="zh">Chinese</div><div class="item" data-id="cs">Czech</div><div class="item" data-id="da">Danish</div><div class="item" data-id="en">English</div><div class="item" data-id="et">Estonian</div><div class="item" data-id="fi">Finnish</div><div class="item" data-id="nl">Flemish</div><div class="item" data-id="fr">French</div><div class="item" data-id="ff">Fulah</div><div class="item" data-id="de">German</div><div class="item" data-id="el">Greeek</div><div class="item" data-id="fa">Persian</div><div class="item" data-id="ga">Irish</div><div class="item" data-id="gd">Scottish Gaelic</div><div class="item" data-id="gl">Galician</div><div class="item" data-id="lg">Ganda</div><div class="item" data-id="gu">Gujarati</div><div class="item" data-id="ha">Hausa</div><div class="item" data-id="he">Hebrew</div><div class="item" data-id="hi">Hindi</div><div class="item" data-id="hr">Croatian</div><div class="item" data-id="ht">Haitian Creole</div><div class="item" data-id="hu">Hungarian</div><div class="item" data-id="id">Indonesian</div><div class="item" data-id="ig">Igbo</div><div class="item" data-id="ilo">Iloko</div><div class="item" data-id="is">Icelandic</div><div class="item" data-id="it">Italian</div><div class="item" data-id="ja">Japanese</div><div class="item" data-id="jv">Javanese</div><div class="item" data-id="ka">Georgian</div><div class="item" data-id="kk">Kazakh</div><div class="item" data-id="km">Central Khmer</div><div class="item" data-id="kn">Kannada</div><div class="item" data-id="ko">Korean</div><div class="item" data-id="lb">Letzeburgesch</div><div class="item" data-id="ln">Lingala</div><div class="item" data-id="lo">Lao</div><div class="item" data-id="lt">Lithuanian</div><div class="item" data-id="lv">Latvian</div><div class="item" data-id="mk">Macedonian</div><div class="item" data-id="mg">Malagasy</div><div class="item" data-id="ml">Malayalam</div><div class="item" data-id="mr">Marathi</div><div class="item" data-id="mn">Mongolian</div><div class="item" data-id="ro">Moldovan</div><div class="item" data-id="ms">Malay</div><div class="item" data-id="my">Burmese</div><div class="item" data-id="ne">Nepali</div><div class="item" data-id="no">Norwegian</div><div class="item" data-id="ns">Northern Sotho</div><div class="item" data-id="oc">Occitan</div><div class="item" data-id="or">Oriya</div><div class="item" data-id="pa">Punjabi</div><div class="item" data-id="pl">Polish</div><div class="item" data-id="ps">Pashto</div><div class="item" data-id="pt">Portuguese</div><div class="item" data-id="ru">Russian</div><div class="item" data-id="sr">Serbian</div><div class="item" data-id="sd">Sindhi</div><div class="item" data-id="si">Sinhalese</div><div class="item" data-id="sk">Slovak</div><div class="item" data-id="sl">Slovenian</div><div class="item" data-id="so">Somali</div><div class="item" data-id="es">Spanish</div><div class="item" data-id="ss">Swati</div><div class="item" data-id="su">Sundanese</div><div class="item" data-id="sv">Swedish</div><div class="item" data-id="sw">Swahili</div><div class="item" data-id="ta">Tamil</div><div class="item" data-id="th">Thai</div><div class="item" data-id="tl">Tagalog</div><div class="item" data-id="tn">Tswana</div><div class="item" data-id="tr">Turkish</div><div class="item" data-id="uk">Ukrainian</div><div class="item" data-id="ur">Urdu</div><div class="item" data-id="uz">Uzbek</div><div class="item" data-id="ca">Valencian</div><div class="item" data-id="vi">Vietnamese</div><div class="item" data-id="cy">Welsh</div><div class="item" data-id="wo">Wolof</div><div class="item" data-id="xh">Xhosa</div><div class="item" data-id="yi">Yiddish</div><div class="item" data-id="yo">Yoruba</div><div class="item" data-id="zu">Zulu</div>
                             </div>
                         </div>
                         <div class="ui fluid search dropdown button column">
                             <input type="hidden" id="targetlang" name="targetlang" class="targetlang">
                             <span class="text"><i class="world icon"></i>Target Language</span>
                             <div class="menu" id="targetl">
-                                <div class="item" data-id="af">Afrikaans</div>
-                                <div class="item" data-id="sq">Albanian</div>
-                                <div class="item" data-id="am">Amharic</div>
-                                <div class="item" data-id="ar">Arabic</div>
-                                <div class="item" data-id="hy">Armenian</div>
-                                <div class="item" data-id="ast">Asturian</div>
-                                <div class="item" data-id="az">Azerbaijani</div>
-                                <div class="item" data-id="ba">Bashkir</div>
-                                <div class="item" data-id="be">Belarusian</div>
-                                <div class="item" data-id="bg">Bulgarian</div>
-                                <div class="item" data-id="bn">Bengali</div>
-                                <div class="item" data-id="br">Breton</div>
-                                <div class="item" data-id="bs">Bosnian</div>
-                                <div class="item" data-id="ceb">Cebuano</div>
-                                <div class="item" data-id="zh">Chinese</div>
-                                <div class="item" data-id="cs">Czech</div>
-                                <div class="item" data-id="da">Danish</div>
-                                <div class="item" data-id="en">English</div>
-                                <div class="item" data-id="et">Estonian</div>
-                                <div class="item" data-id="fi">Finnish</div>
-                                <div class="item" data-id="nl">Flemish</div>
-                                <div class="item" data-id="fr">French</div>
-                                <div class="item" data-id="ff">Fulah</div>
-                                <div class="item" data-id="de">German</div>
-                                <div class="item" data-id="el">Greeek</div>
-                                <div class="item" data-id="fa">Persian</div>
-                                <div class="item" data-id="ga">Irish</div>
-                                <div class="item" data-id="gd">Scottish Gaelic</div>
-                                <div class="item" data-id="gl">Galician</div>
-                                <div class="item" data-id="lg">Ganda</div>
-                                <div class="item" data-id="gu">Gujarati</div>
-                                <div class="item" data-id="ha">Hausa</div>
-                                <div class="item" data-id="he">Hebrew</div>
-                                <div class="item" data-id="hi">Hindi</div>
-                                <div class="item" data-id="hr">Croatian</div>
-                                <div class="item" data-id="ht">Haitian Creole</div>
-                                <div class="item" data-id="hu">Hungarian</div>
-                                <div class="item" data-id="id">Indonesian</div>
-                                <div class="item" data-id="ig">Igbo</div>
-                                <div class="item" data-id="ilo">Iloko</div>
-                                <div class="item" data-id="is">Icelandic</div>
-                                <div class="item" data-id="it">Italian</div>
-                                <div class="item" data-id="ja">Japanese</div>
-                                <div class="item" data-id="jv">Javanese</div>
-                                <div class="item" data-id="ka">Georgian</div>
-                                <div class="item" data-id="kk">Kazakh</div>
-                                <div class="item" data-id="km">Central Khmer</div>
-                                <div class="item" data-id="kn">Kannada</div>
-                                <div class="item" data-id="ko">Korean</div>
-                                <div class="item" data-id="lb">Letzeburgesch</div>
-                                <div class="item" data-id="ln">Lingala</div>
-                                <div class="item" data-id="lo">Lao</div>
-                                <div class="item" data-id="lt">Lithuanian</div>
-                                <div class="item" data-id="lv">Latvian</div>
-                                <div class="item" data-id="mk">Macedonian</div>
-                                <div class="item" data-id="mg">Malagasy</div>
-                                <div class="item" data-id="ml">Malayalam</div>
-                                <div class="item" data-id="mr">Marathi</div>
-                                <div class="item" data-id="mn">Mongolian</div>
-                                <div class="item" data-id="ro">Moldovan</div>
-                                <div class="item" data-id="ms">Malay</div>
-                                <div class="item" data-id="my">Burmese</div>
-                                <div class="item" data-id="ne">Nepali</div>
-                                <div class="item" data-id="no">Norwegian</div>
-                                <div class="item" data-id="ns">Northern Sotho</div>
-                                <div class="item" data-id="oc">Occitan</div>
-                                <div class="item" data-id="or">Oriya</div>
-                                <div class="item" data-id="pa">Punjabi</div>
-                                <div class="item" data-id="pl">Polish</div>
-                                <div class="item" data-id="ps">Pashto</div>
-                                <div class="item" data-id="pt">Portuguese</div>
-                                <div class="item" data-id="ru">Russian</div>
-                                <div class="item" data-id="sr">Serbian</div>
-                                <div class="item" data-id="sd">Sindhi</div>
-                                <div class="item" data-id="si">Sinhalese</div>
-                                <div class="item" data-id="sk">Slovak</div>
-                                <div class="item" data-id="sl">Slovenian</div>
-                                <div class="item" data-id="so">Somali</div>
-                                <div class="item" data-id="es">Spanish</div>
-                                <div class="item" data-id="ss">Swati</div>
-                                <div class="item" data-id="su">Sundanese</div>
-                                <div class="item" data-id="sv">Swedish</div>
-                                <div class="item" data-id="sw">Swahili</div>
-                                <div class="item" data-id="ta">Tamil</div>
-                                <div class="item" data-id="th">Thai</div>
-                                <div class="item" data-id="tl">Tagalog</div>
-                                <div class="item" data-id="tn">Tswana</div>
-                                <div class="item" data-id="tr">Turkish</div>
-                                <div class="item" data-id="uk">Ukrainian</div>
-                                <div class="item" data-id="ur">Urdu</div>
-                                <div class="item" data-id="uz">Uzbek</div>
-                                <div class="item" data-id="ca">Valencian</div>
-                                <div class="item" data-id="vi">Vietnamese</div>
-                                <div class="item" data-id="cy">Welsh</div>
-                                <div class="item" data-id="wo">Wolof</div>
-                                <div class="item" data-id="xh">Xhosa</div>
-                                <div class="item" data-id="yi">Yiddish</div>
-                                <div class="item" data-id="yo">Yoruba</div>
-                                <div class="item" data-id="zu">Zulu</div>
+                                <div class="item" data-id="af">Afrikaans</div><div class="item" data-id="sq">Albanian</div><div class="item" data-id="am">Amharic</div><div class="item" data-id="ar">Arabic</div><div class="item" data-id="hy">Armenian</div><div class="item" data-id="ast">Asturian</div><div class="item" data-id="az">Azerbaijani</div><div class="item" data-id="ba">Bashkir</div><div class="item" data-id="be">Belarusian</div><div class="item" data-id="bg">Bulgarian</div><div class="item" data-id="bn">Bengali</div><div class="item" data-id="br">Breton</div><div class="item" data-id="bs">Bosnian</div><div class="item" data-id="ceb">Cebuano</div><div class="item" data-id="zh">Chinese</div><div class="item" data-id="cs">Czech</div><div class="item" data-id="da">Danish</div><div class="item" data-id="en">English</div><div class="item" data-id="et">Estonian</div><div class="item" data-id="fi">Finnish</div><div class="item" data-id="nl">Flemish</div><div class="item" data-id="fr">French</div><div class="item" data-id="ff">Fulah</div><div class="item" data-id="de">German</div><div class="item" data-id="el">Greeek</div><div class="item" data-id="fa">Persian</div><div class="item" data-id="ga">Irish</div><div class="item" data-id="gd">Scottish Gaelic</div><div class="item" data-id="gl">Galician</div><div class="item" data-id="lg">Ganda</div><div class="item" data-id="gu">Gujarati</div><div class="item" data-id="ha">Hausa</div><div class="item" data-id="he">Hebrew</div><div class="item" data-id="hi">Hindi</div><div class="item" data-id="hr">Croatian</div><div class="item" data-id="ht">Haitian Creole</div><div class="item" data-id="hu">Hungarian</div><div class="item" data-id="id">Indonesian</div><div class="item" data-id="ig">Igbo</div><div class="item" data-id="ilo">Iloko</div><div class="item" data-id="is">Icelandic</div><div class="item" data-id="it">Italian</div><div class="item" data-id="ja">Japanese</div><div class="item" data-id="jv">Javanese</div><div class="item" data-id="ka">Georgian</div><div class="item" data-id="kk">Kazakh</div><div class="item" data-id="km">Central Khmer</div><div class="item" data-id="kn">Kannada</div><div class="item" data-id="ko">Korean</div><div class="item" data-id="lb">Letzeburgesch</div><div class="item" data-id="ln">Lingala</div><div class="item" data-id="lo">Lao</div><div class="item" data-id="lt">Lithuanian</div><div class="item" data-id="lv">Latvian</div><div class="item" data-id="mk">Macedonian</div><div class="item" data-id="mg">Malagasy</div><div class="item" data-id="ml">Malayalam</div><div class="item" data-id="mr">Marathi</div><div class="item" data-id="mn">Mongolian</div><div class="item" data-id="ro">Moldovan</div><div class="item" data-id="ms">Malay</div><div class="item" data-id="my">Burmese</div><div class="item" data-id="ne">Nepali</div><div class="item" data-id="no">Norwegian</div><div class="item" data-id="ns">Northern Sotho</div><div class="item" data-id="oc">Occitan</div><div class="item" data-id="or">Oriya</div><div class="item" data-id="pa">Punjabi</div><div class="item" data-id="pl">Polish</div><div class="item" data-id="ps">Pashto</div><div class="item" data-id="pt">Portuguese</div><div class="item" data-id="ru">Russian</div><div class="item" data-id="sr">Serbian</div><div class="item" data-id="sd">Sindhi</div><div class="item" data-id="si">Sinhalese</div><div class="item" data-id="sk">Slovak</div><div class="item" data-id="sl">Slovenian</div><div class="item" data-id="so">Somali</div><div class="item" data-id="es">Spanish</div><div class="item" data-id="ss">Swati</div><div class="item" data-id="su">Sundanese</div><div class="item" data-id="sv">Swedish</div><div class="item" data-id="sw">Swahili</div><div class="item" data-id="ta">Tamil</div><div class="item" data-id="th">Thai</div><div class="item" data-id="tl">Tagalog</div><div class="item" data-id="tn">Tswana</div><div class="item" data-id="tr">Turkish</div><div class="item" data-id="uk">Ukrainian</div><div class="item" data-id="ur">Urdu</div><div class="item" data-id="uz">Uzbek</div><div class="item" data-id="ca">Valencian</div><div class="item" data-id="vi">Vietnamese</div><div class="item" data-id="cy">Welsh</div><div class="item" data-id="wo">Wolof</div><div class="item" data-id="xh">Xhosa</div><div class="item" data-id="yi">Yiddish</div><div class="item" data-id="yo">Yoruba</div><div class="item" data-id="zu">Zulu</div>
                             </div>
                         </div>
                       </div>
