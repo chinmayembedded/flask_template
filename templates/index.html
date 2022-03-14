@@ -25,14 +25,14 @@
             });
 
             $(document).ready(function(){
-                var hf_models = ['facebook/m2m100_418M', 'facebook/m2m100_1.2B']
+                // var hf_models = ['facebook/m2m100_418M', 'facebook/m2m100_1.2B']
                 $.ajax({
                     url: "{{ url_for('request_api.models') }}",
                     type: 'GET',
                     dataType: 'json',
                     success: function(data){
                         var models = data['models'];
-                        models = models.concat(hf_models);
+                        // models = models.concat(hf_models);
                         for( var i = 0; i< models.length; i++){
                                 $('#models').append("<div class='item'>"+ models[i] + "</div>");
                         }
@@ -77,19 +77,23 @@
                         },
                         success: function(data){
                             if (data["message"] == "success"){
-                                console.log(data);
+                                // console.log(data);
 
-                                if("source_lang" in data && "target_lang" in data){
-                                    var lang = data['source_lang'];
+                                if("sourceLangDict" in data && "targetLangDict" in data){
+                                    var lang = data['sourceLangDict'];
+                                    console.log(lang)
                                     var divs = '';
-                                    for( var i = 0; i< lang.length; i++){
-                                        divs = divs + "<div class='item' data-id=" + lang[i]["id"] +">"+ lang[i]["name"] + "</div>"
+                                    for (let k in lang) {
+                                        console.log('source ' + k + ' is ' + lang[k])
+                                        divs = divs + "<div class='item' data-id='"+lang[k]+"'>"+k+"</div>"
                                     }
                                     $('#sourcel').html(divs);
-                                    var lang = data['target_lang'];
+                                    var lang = data['targetLangDict'];
+                                    console.log(lang)
                                     var divs = '';
-                                    for( var i = 0; i< lang.length; i++){
-                                        divs = divs + "<div class='item' data-id=" + lang[i]["id"] +">"+ lang[i]["name"] + "</div>"
+                                    for (let k in lang) {
+                                        console.log('target ' + k + ' is ' + lang[k])
+                                        divs = divs + "<div class='item' data-id='"+lang[k]+"'>"+k+"</div>"
                                     }
                                     $('#targetl').html(divs);
                                 }
@@ -692,7 +696,7 @@
         <footer class="footer">
           <div class="container">
             <span class="text-muted">
-                V. 0.2 - Being developed by Raj Dabre, Chinmay Sawant, and Diptesh Kanojia</a>; Translation model at <a href="https://huggingface.co/docs/transformers/model_doc/m2m_100">HuggingFace FB-M2M Model</a>.
+                V. 1.0 - Being developed by Chinmay Sawant, Diptesh Kanojia, and Raj Dabre</a>; Translation model at <a href="https://huggingface.co/docs/transformers/model_doc/m2m_100">HuggingFace FB-M2M Model</a>.
             </span>
           </div>
         </footer>
